@@ -1,135 +1,95 @@
-h-resolution
+h-extensions
 ==========
 
-A lightweight error collection framework.
+An extension library for .Net classes and types.
 
 ## Requirements
-h-resolution works with .NET Framework 4.5 and higher
+h-extensions works with .NET Framework 4.5 and higher
 
 ## Usage
 
-Have validation, service, and/or domain methods return a `Hylasoft.Resolution.Result` object.
+Build a string from any IEnumerable of char's.
 
 ````C#
-public Result Validate()
+  var chars = new []{'a', 'b', 'f', 'o', 'o'};
+  var foo = chars.Where(chr => chr > 0x65).BuildString();
+  // foo == "foo"
+````
+
+Build a list string from any IEnumerable of char's.
+````C#
+  var chars = new []{'a', 'b', 'f', 'o', 'o'};
+  var foo = chars.Where(chr => chr > 0x65).ToRangeString();
+  // foo == "f, o, o"
+````
+
+Parse an enumeration from a string.
+
+````C#
+public enum TestEnum
 {
-	return conditionMet()
-		? Result.Info("Validation passed.")
-		: Result.Error("Validation did not pass.");
+  Unknown = 0x0,
+  FirstValue = 0x1,
+  SecondValue = 0x2
+}
+
+public void Foo()
+{
+  var first = "FirstValue".ToEnum<TestEnum>();
+  // first == TestEnum.FirstValue
+
+  var invalid = "NotARealValue".ToEnum<TestEnum>();
+  // invalid == TestEnum.Unknown
 }
 ````
 
-Concatenate Results by using the addition operator.
+Retrieve the description from an enumeration.
 
 ````C#
-public Result Validate()
+public enum TestEnum
 {
-	var first = ValidateFirst();
-	var second = ValidateSecond();
+  [Description("Uknown Value")]
+  Unknown = 0x0,
 
-	return first + second;
+  [Description("The First Value")]
+  FirstValue = 0x1,
+
+  [Description("The Second Value")]
+  SecondValue = 0x2
+}
+
+public void Foo()
+{
+  var description = "FirstValue".ToEnum<TestEnum>().GetDescription();
+  // description == "The First Value"
 }
 ````
 
-Or by using Result.Concat().
+Create a delimited list string, from any IEnumerable<string>.
 
 ````C#
-public Result Validate()
+public void Foo()
 {
-	return Result.Concat(ValidateFirst, ValidateSecond, ValidateThird);
-}
+  const string fooDir = @"C:\foo";
 
-public Result ValidateWithParam<T>(T param)
-{
-	return Result.Concat(param, ValidateFirst, ValidateSecond, ValidateThird);
-}
-````
+  Directory.CreateDirectory(fooDir);
+  File.Create(Path.Combine(fooDir, "bar.txt"));
+  File.Create(Path.Combine(fooDir, "baz.txt"));
 
-Result.ConcatRestricted() can be used in the same way, but will stop execution on the first failure.
-
-````C#
-public Result Validate()
-{
-	return Result.ConcatRestricted(ValidateFirst, ValidateSecond, ValidateThird);
+  var fooFiles = Directory.GetFiles(fooDir).ToListString("; ");
+  // fooFiles = "bar.txt; baz.txt"
 }
 ````
 
-Results can be built from exceptions.
+Retrieve the inner most exception.
 
 ````C#
-public Result Validate()
-{
-	try
-	{
-		ValidateFirst();
-		ValidateSecond();
+  var foo = new NotImplementedException("Foo");
+  var bar = new NotImplementedException("Bar", foo);
 
-		return Result.Success;
-	}
-	catch (Exception e)
-	{
-		return Result.Error(e);
-	}
-}
+  var inner = bar.InnerMost();
+  // inner == foo
 ````
-
-Results can be implicitly cast to bool.
-
-````C#
-public Result Validate()
-{
-	Result first;
-	return (first = ValidateFirst())
-		? first + ValidateSecond()
-		: first.AppendError("The first phase of validation failed.");
-}
-````
-
-Failure is defined as a result containing any Result Issue with a level higher than a warning.
-
-````C#
-	if (Result.Trace("Trace message"); // true
-
-	if (Result.SingleDebug("Debug message"); // true
-
-	if (Result.SingleInfo("Info message"); // true
-
-	if (Result.SingleWarning("Warning message"); // true
-
-	if (Result.SingleError("Error message"); // false
-
-	if (Result.SingleFatal("Fatal message"); // false
-````
-
-Results are treated as IEnumerable<ResultIssue>
-
-````C#
-	var result = Validate();
-	var errors = result.Where(issue => issue.Level > ResultLevels.Warning).ToList();
-````
-
-Result issues can be compared to each other, and equated against longs, strings, or other result issues.
-
-````C#
-	var result = Validate();
-	var result2 = ValidateSecond();
-
-	var distinctIssues = result.Distinct().ToList();
-	var exclusions = result.Except(result2).ToList();
-	
-	var targetCode = 5;
-	var targetMessage = Resources.Warnings.SpecificWarning;
-
-	if (result.Contains(targetCode))
-		result.AppendTrace("Result contains '{0}'.", targetCode);
-
-	if (result.Contains(targetMessage))
-		result.AppendTrace("Result contains specific message.");
-
-	if (result.Contains(result2.Max())
-		result.AppendTrace("Max result2 included in first.");
-````
-
 ## Build
 
 You can build the project using Visual Studio or by running the grunt tasks for `msbuild`

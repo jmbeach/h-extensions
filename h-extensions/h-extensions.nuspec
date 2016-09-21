@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>Hylasoft USA</owners>
+    <licenseUrl>https://github.com/hylasoft-usa/h-extensions/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/hylasoft-usa/h-extensions</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release of h-extensions.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>Extensions Hylasoft</tags>
+  </metadata>
+</package>

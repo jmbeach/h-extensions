@@ -42,6 +42,7 @@
     <Compile Include="CharSequenceExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="ExceptionExtensions.cs" />
+    <Compile Include="MethodExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>

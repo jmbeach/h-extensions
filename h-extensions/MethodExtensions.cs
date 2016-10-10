@@ -28,16 +28,16 @@ namespace Hylasoft.Extensions
       if (method == null)
         return string.Empty;
 
-      Type reflected;
-      if ((reflected = method.ReflectedType) == null)
+      Type declared;
+      if ((declared = method.DeclaringType) == null)
         return method.Name;
 
       var methodName = method.Name;
       var className = fullNamespace
-        ? reflected.FullName
-        : reflected.Name;
+        ? declared.FullName
+        : declared.Name;
 
-      return string.Format("{0}.{1}", methodName, className); 
+      return string.Format("{0}.{1}", className, methodName); 
     }
   }
 }

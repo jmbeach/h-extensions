@@ -90,6 +90,41 @@ Retrieve the inner most exception.
   var inner = bar.InnerMost();
   // inner == foo
 ````
+
+Build a string of object properties.
+
+````C#
+	var testObject = new
+	{
+		Foo = "Baz",
+		Identity = 42,
+		NestedValues = new[]
+		{
+			"First",
+			"Second",
+			"Thrid"
+		},
+		NestedObject = new
+		{
+			Inner = "InnerValue",
+			InnerIdentity = 47
+		}
+	};
+
+	var details = testObject.ToDetailedString("testObject");
+	/* details =
+		(<>f__AnonymousType1`4) [<>f__AnonymousType1`4] : testObject
+			(String) [Foo] : Baz
+			(Int32) [Identity] : 42
+			(String[]) [String[]] : NestedValues
+				(String) : First
+				(String) : Second
+				(String) : Thrid
+			(<>f__AnonymousType0`2) [<>f__AnonymousType0`2] : NestedObject
+				(String) [Inner] : InnerValue
+				(Int32) [InnerIdentity] : 47
+	*/
+````
 ## Build
 
 You can build the project using Visual Studio or by running the grunt tasks for `msbuild`

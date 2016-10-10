@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/hylasoft-usa/h-extensions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Adds MethodName and FullMethodName.</releaseNotes>
+    <releaseNotes>Adds object extensions.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Extensions Hylasoft</tags>
   </metadata>

@@ -45,5 +45,23 @@ namespace Hylasoft.Extensions
       var fooLine = detailLines[4];
       Assert.IsTrue(fooLine.Contains("Foo"));
     }
+
+    [TestMethod]
+    public void DetailedObjectStringRecursionTest()
+    {
+      const string innerVal = "Inner Value";
+      const string stringVal = "Custom String";
+
+      var innerObj = new ObjectInnerTestClass(innerVal);
+      var recursiveObj = new ObjectRecursionTestClass(stringVal, innerObj);
+
+      var detailedString = recursiveObj.ToDetailedString();
+
+      var delimiters = new[] {Environment.NewLine};
+      var lines = detailedString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+      Assert.IsNotNull(lines);
+      Assert.AreEqual(lines.Length, 4);
+    }
   }
 }

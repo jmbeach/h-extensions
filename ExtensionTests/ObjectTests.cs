@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Hylasoft.Extensions.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -44,6 +45,44 @@ namespace Hylasoft.Extensions
 
       var fooLine = detailLines[4];
       Assert.IsTrue(fooLine.Contains("Foo"));
+    }
+
+    [TestMethod]
+    public void DetailedObjectStringRecursionTest()
+    {
+      const string innerVal = "Inner Value";
+      const string stringVal = "Custom String";
+
+      var innerObj = new ObjectInnerTestClass(innerVal);
+      var recursiveObj = new ObjectRecursionTestClass(stringVal, innerObj);
+
+      var detailedString = recursiveObj.ToDetailedString();
+
+      var delimiters = new[] {Environment.NewLine};
+      var lines = detailedString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+      Assert.IsNotNull(lines);
+      Assert.AreEqual(lines.Length, 4);
+    }
+
+    [TestMethod]
+    public void DetailedObjectCollectionRecursionTest()
+    {
+      var testCollection = new Collection<ObjectInnerTestClass>
+      {
+        new ObjectInnerTestClass("foo"),
+        new ObjectInnerTestClass("baz")
+      };
+
+      var detailedString = testCollection.ToDetailedString();
+
+      Assert.IsFalse(string.IsNullOrEmpty(detailedString));
+      var delimiters = new[] {Environment.NewLine};
+      var lines = detailedString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+      const int lineCount = 4;
+      Assert.IsNotNull(lines);
+      Assert.AreEqual(lines.Length, lineCount);
     }
   }
 }

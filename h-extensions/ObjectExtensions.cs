@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows.Markup;
 
 namespace Hylasoft.Extensions
 {
@@ -32,6 +33,18 @@ namespace Hylasoft.Extensions
         : BuildComplexDetailedString(val, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation);
     }
 
+    private static string ToListOfDetailedStrings(this IEnumerable<object> vals, string instanceName, string entryTerminator,
+      string typeWrapper, string nameWrapper, string indentation = DefaultIndentation)
+    {
+      var builder = new StringBuilder();
+      
+      var lines = vals.Select(obj => ToDetailedString(obj, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation));
+      foreach (var line in lines)
+        builder.AppendLine(line);
+
+      return builder.ToString();
+    }
+
     private static string BuildComplexDetailedString(object val, string instanceName, string entryTerminator,
       string typeWrapper, string nameWrapper, string indentation)
     {
@@ -43,8 +56,14 @@ namespace Hylasoft.Extensions
       if (IsValueObject(val))
         return val.ToString();
 
+      if (IsEnumerableObject(val))
+        return ToListOfDetailedStrings(val as IEnumerable<object>, instanceName, entryTerminator,
+          typeWrapper, nameWrapper, indentation);
+
+      var complexTypes = new List<object> { val };
+
       lines.Add(BuildInstanceLine(instanceName, type, typeWrapper, nameWrapper, indentation));
-      lines.AddRange(BuildPropertyLines(1, val, type, typeWrapper, nameWrapper, indentation));
+      lines.AddRange(BuildPropertyLines(complexTypes, 1, val, type, typeWrapper, nameWrapper, indentation));
 
       return BuildDetailedString(entryTerminator, lines);
     }
@@ -58,23 +77,23 @@ namespace Hylasoft.Extensions
         : BuildLine(index, instanceTypeName, instanceName, typeWrapper, nameWrapper, indentation, instanceType);
     }
 
-    private static IEnumerable<string> BuildPropertyLines(int index, object instance,
+    private static IEnumerable<string> BuildPropertyLines(List<object> complexTypes, int index, object instance,
       string typeWrapper, string nameWrapper, string indentation)
     {
       return (instance == null)
         ? new String[0]
         : IsValueObject(instance)
           ? new []{BuildLine(index, null, instance, typeWrapper, nameWrapper, indentation)}
-          : BuildPropertyLines(index, instance, instance.GetType(), typeWrapper, nameWrapper, indentation);
+          : BuildPropertyLines(complexTypes, index, instance, instance.GetType(), typeWrapper, nameWrapper, indentation);
     }
 
-    private static IEnumerable<string> BuildPropertyLines(int index, object instance, IReflect instanceType,
-      string typeWrapper, string nameWrapper, string indentation)
+    private static IEnumerable<string> BuildPropertyLines(List<object> complexTypes, int index, object instance,
+      IReflect instanceType, string typeWrapper, string nameWrapper, string indentation)
     {
       var properties = GetProperties(instanceType);
       return properties == null
         ? new string[0]
-        : properties.SelectMany(prop => GetPropertyLines(index, prop, instance, typeWrapper, nameWrapper, indentation));
+        : properties.SelectMany(prop => GetPropertyLines(complexTypes, index, prop, instance, typeWrapper, nameWrapper, indentation));
     }
 
     private static IEnumerable<PropertyInfo> GetProperties(IReflect instanceType)
@@ -82,10 +101,10 @@ namespace Hylasoft.Extensions
       return instanceType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
     }
 
-    private delegate IEnumerable<string> PropertyRetrieval(string propertyName, int index, object val,
+    private delegate IEnumerable<string> PropertyRetrieval(List<object> complexTypes, string propertyName, int index, object val,
       string typeWrapper, string nameWrapper, string indentation);
 
-    private static IEnumerable<string> GetPropertyLines(int index, PropertyInfo propInfo, object instance,
+    private static IEnumerable<string> GetPropertyLines(List<object> complexTypes, int index, PropertyInfo propInfo, object instance,
       string typeWrapper, string nameWrapper, string indentation)
     {
       object property;
@@ -99,17 +118,17 @@ namespace Hylasoft.Extensions
           ? (PropertyRetrieval) GetEnumerablePropertyLine
           : GetComplexPropertyLine;
 
-      return retrieval(propName, index, property, typeWrapper, nameWrapper, indentation);
+      return retrieval(complexTypes, propName, index, property, typeWrapper, nameWrapper, indentation);
     }
 
-    private static IEnumerable<string> GetValuePropertyLine(string propertyName, int index, object val,
+    private static IEnumerable<string> GetValuePropertyLine(List<object> complexTypes, string propertyName, int index, object val,
       string typeWrapper, string nameWrapper, string indentation)
     {
       return new[] {BuildLine(index, propertyName, val, typeWrapper, nameWrapper, indentation)};
     }
 
-    private static IEnumerable<string> GetEnumerablePropertyLine(string propertyName, int index, object enumerable,
-      string typeWrapper, string nameWrapper, string indentation)
+    private static IEnumerable<string> GetEnumerablePropertyLine(List<object> complexTypes, string propertyName, int index,
+      object enumerable, string typeWrapper, string nameWrapper, string indentation)
     {
       var enums = enumerable as IEnumerable;
       if (enums == null) return new string[0];
@@ -121,24 +140,25 @@ namespace Hylasoft.Extensions
       };
 
       foreach (var obj in enums)
-        lines.AddRange(BuildPropertyLines(index+1, obj, typeWrapper, nameWrapper, indentation));
+        lines.AddRange(BuildPropertyLines(complexTypes, index+1, obj, typeWrapper, nameWrapper, indentation));
 
       return lines;
     }
 
-    private static IEnumerable<string> GetComplexPropertyLine(string propertyName, int index, object complex,
+    private static IEnumerable<string> GetComplexPropertyLine(List<object> complexTypes, string propertyName, int index, object complex,
       string typeWrapper, string nameWrapper, string indentation)
     {
-      if (ReferenceEquals(complex, null))
+      if (ReferenceEquals(complex, null) || complexTypes.Contains(complex))
         return new String[0];
 
+      complexTypes.Add(complex);
       var type = complex.GetType();
       var lines = new List<string>
       {
         BuildInstanceLine(propertyName, type, typeWrapper, nameWrapper, indentation, index)
       };
 
-      lines.AddRange(BuildPropertyLines(index+1, complex, typeWrapper, nameWrapper, indentation));
+      lines.AddRange(BuildPropertyLines(complexTypes, index+1, complex, typeWrapper, nameWrapper, indentation));
       return lines;
     }
 

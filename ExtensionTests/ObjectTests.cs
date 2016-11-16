@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Hylasoft.Extensions.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -62,6 +63,26 @@ namespace Hylasoft.Extensions
 
       Assert.IsNotNull(lines);
       Assert.AreEqual(lines.Length, 4);
+    }
+
+    [TestMethod]
+    public void DetailedObjectCollectionRecursionTest()
+    {
+      var testCollection = new Collection<ObjectInnerTestClass>
+      {
+        new ObjectInnerTestClass("foo"),
+        new ObjectInnerTestClass("baz")
+      };
+
+      var detailedString = testCollection.ToDetailedString();
+
+      Assert.IsFalse(string.IsNullOrEmpty(detailedString));
+      var delimiters = new[] {Environment.NewLine};
+      var lines = detailedString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+      const int lineCount = 4;
+      Assert.IsNotNull(lines);
+      Assert.AreEqual(lines.Length, lineCount);
     }
   }
 }

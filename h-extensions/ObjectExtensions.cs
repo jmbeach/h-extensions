@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows.Markup;
 
 namespace Hylasoft.Extensions
 {
@@ -32,6 +33,18 @@ namespace Hylasoft.Extensions
         : BuildComplexDetailedString(val, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation);
     }
 
+    private static string ToListOfDetailedStrings(this IEnumerable<object> vals, string instanceName, string entryTerminator,
+      string typeWrapper, string nameWrapper, string indentation = DefaultIndentation)
+    {
+      var builder = new StringBuilder();
+      
+      var lines = vals.Select(obj => ToDetailedString(obj, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation));
+      foreach (var line in lines)
+        builder.AppendLine(line);
+
+      return builder.ToString();
+    }
+
     private static string BuildComplexDetailedString(object val, string instanceName, string entryTerminator,
       string typeWrapper, string nameWrapper, string indentation)
     {
@@ -43,7 +56,12 @@ namespace Hylasoft.Extensions
       if (IsValueObject(val))
         return val.ToString();
 
+      if (IsEnumerableObject(val))
+        return ToListOfDetailedStrings(val as IEnumerable<object>, instanceName, entryTerminator,
+          typeWrapper, nameWrapper, indentation);
+
       var complexTypes = new List<object> { val };
+
       lines.Add(BuildInstanceLine(instanceName, type, typeWrapper, nameWrapper, indentation));
       lines.AddRange(BuildPropertyLines(complexTypes, 1, val, type, typeWrapper, nameWrapper, indentation));
 

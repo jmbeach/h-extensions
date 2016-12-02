@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -40,6 +41,7 @@ namespace Hylasoft.Extensions
     /// <typeparam name="TAttr">The type of attribute to retrieve.</typeparam>
     /// <typeparam name="TObj">The type of object to search for attributes.</typeparam>
     /// <returns>A pairing object members with matching attributes.</returns>
+    [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "The nested types are in a return.")]
     public static Collection<MemberAttributePairing<TAttr>> GetMemberAttributes<TObj,TAttr>()
     {
       var objType = typeof (TObj);
@@ -52,6 +54,7 @@ namespace Hylasoft.Extensions
     /// <typeparam name="TAttr">The type of attribute to retrieve.</typeparam>
     /// <param name="objType">The type of object to search for attributes.</param>
     /// <returns>A pairing object members with matching attributes.</returns>
+    [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "The nested types are in a return.")]
     public static Collection<MemberAttributePairing<TAttr>> GetMemberAttributes<TAttr>(this Type objType)
     {
       var attrType = typeof(TAttr);

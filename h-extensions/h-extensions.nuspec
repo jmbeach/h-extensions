@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/hylasoft-usa/h-extensions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Hot fixes for object.ToDetailedString().</releaseNotes>
+    <releaseNotes>Extends enum parsing to include descriptions.  Adds Type extension to receiving member custom attribute.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Extensions Hylasoft</tags>
   </metadata>

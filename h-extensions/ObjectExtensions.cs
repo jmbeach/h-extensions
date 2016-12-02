@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Markup;
+using Hylasoft.Extensions.Types;
 
 namespace Hylasoft.Extensions
 {
@@ -31,6 +32,36 @@ namespace Hylasoft.Extensions
       return ReferenceEquals(val, null)
         ? string.Empty
         : BuildComplexDetailedString(val, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation);
+    }
+
+    /// <summary>
+    /// Returns a list of specific attributes existing on any member of any object type.
+    /// </summary>
+    /// <typeparam name="TAttr">The type of attribute to retrieve.</typeparam>
+    /// <typeparam name="TObj">The type of object to search for attributes.</typeparam>
+    /// <returns>A pairing object members with matching attributes.</returns>
+    public static Collection<MemberAttributePairing<TAttr>> GetMemberAttributes<TObj,TAttr>()
+    {
+      var objType = typeof (TObj);
+      return objType.GetMemberAttributes<TAttr>();
+    }
+
+    /// <summary>
+    /// Returns a list of specific attributes existing on any member of any object type.
+    /// </summary>
+    /// <typeparam name="TAttr">The type of attribute to retrieve.</typeparam>
+    /// <param name="objType">The type of object to search for attributes.</param>
+    /// <returns>A pairing object members with matching attributes.</returns>
+    public static Collection<MemberAttributePairing<TAttr>> GetMemberAttributes<TAttr>(this Type objType)
+    {
+      var attrType = typeof(TAttr);
+
+      var pairings = objType.GetMembers()
+        .Where(member => member.GetCustomAttributes(attrType, true).OfType<TAttr>().Any())
+        .Select(member => new MemberAttributePairing<TAttr>(member, member.GetCustomAttributes(attrType, true)
+              .OfType<TAttr>())).ToArray();
+
+      return new Collection<MemberAttributePairing<TAttr>>(pairings);
     }
 
     private static string ToListOfDetailedStrings(this IEnumerable<object> vals, string instanceName, string entryTerminator,

@@ -1,4 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using Hylasoft.Extensions.TestClasses;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EnumDescription  = System.ComponentModel.DescriptionAttribute;
 
 namespace Hylasoft.Extensions
@@ -47,6 +52,24 @@ namespace Hylasoft.Extensions
       Assert.IsTrue(string.IsNullOrEmpty(barDesc));
     }
 
+    [TestMethod]
+    public void EnumParseTest()
+    {
+      const string secondEnumName = "SecondValue";
+      const string secondEnumDescription = "Second Value";
+      const string badEnumName = "NotAValue";
 
+      const ComplexTestEnum defaultEnum = ComplexTestEnum.Uninitialized;
+      const ComplexTestEnum secondEnum = ComplexTestEnum.SecondValue;
+
+      var parsedName = secondEnumName.ToEnum<ComplexTestEnum>();
+      Assert.AreEqual(parsedName, secondEnum);
+
+      var parsedDescription = secondEnumDescription.ToEnum<ComplexTestEnum>();
+      Assert.AreEqual(parsedDescription, secondEnum);
+
+      var unparsedEnum = badEnumName.ToEnum<ComplexTestEnum>();
+      Assert.AreEqual(unparsedEnum, defaultEnum);
+    }
   }
 }

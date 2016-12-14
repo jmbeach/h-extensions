@@ -67,12 +67,13 @@ namespace Hylasoft.Extensions
       return new Collection<MemberAttributePairing<TAttr>>(pairings);
     }
 
-    private static string ToListOfDetailedStrings(this IEnumerable<object> vals, string instanceName, string entryTerminator,
+    private static string ToListOfDetailedStrings(this IEnumerable vals, string instanceName, string entryTerminator,
       string typeWrapper, string nameWrapper, string indentation = DefaultIndentation)
     {
       var builder = new StringBuilder();
+      var objectVals = vals.Cast<object>();
       
-      var lines = vals.Select(obj => ToDetailedString(obj, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation));
+      var lines = objectVals.Select(obj => ToDetailedString(obj, instanceName, entryTerminator, typeWrapper, nameWrapper, indentation));
       foreach (var line in lines)
         builder.AppendLine(line);
 
@@ -91,7 +92,7 @@ namespace Hylasoft.Extensions
         return val.ToString();
 
       if (IsEnumerableObject(val))
-        return ToListOfDetailedStrings(val as IEnumerable<object>, instanceName, entryTerminator,
+        return ToListOfDetailedStrings(val as IEnumerable, instanceName, entryTerminator,
           typeWrapper, nameWrapper, indentation);
 
       var complexTypes = new List<object> { val };
@@ -203,7 +204,7 @@ namespace Hylasoft.Extensions
 
     private static bool IsEnumerableObject(object instance)
     {
-      return instance is IEnumerable;
+      return !ReferenceEquals(instance, null) && instance is IEnumerable;
     }
     
     private static string BuildDetailedString(string terminator, IEnumerable<string> lines)

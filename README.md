@@ -125,6 +125,29 @@ Build a string of object properties.
 				(Int32) [InnerIdentity] : 47
 	*/
 ````
+
+Convert enumerations to collections.
+
+````C#
+  var foo = new [] { 1, 2, 3, 4 };
+  var bar = foo
+    .Where(val => val > 2)
+    .ToCollection();
+
+  // bar == Collection<int> { 3, 4 };
+````
+
+Perform an action on an enumeration.
+
+````C#
+  var foo = new [] { 1, 2, 3, 4 };
+
+  foo.Select(val => val.ToString())
+    .ForEach(Console.Write);
+
+ // Console: 1234
+````
+
 ## Build
 
 You can build the project using Visual Studio or by running the grunt tasks for `msbuild`

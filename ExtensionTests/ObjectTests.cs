@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Hylasoft.Extensions.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -83,6 +86,18 @@ namespace Hylasoft.Extensions
       const int lineCount = 4;
       Assert.IsNotNull(lines);
       Assert.AreEqual(lines.Length, lineCount);
+    }
+
+    [TestMethod]
+    public void DetailedObjectValueTypeCollectionTest()
+    {
+      var foo = new Collection<long>
+      {
+        4
+      };
+
+      var detailedString = foo.ToDetailedString();
+      Assert.IsFalse(string.IsNullOrEmpty(detailedString));
     }
   }
 }

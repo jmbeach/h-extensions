@@ -33,9 +33,10 @@ namespace Hylasoft.Extensions
       const string stringVal = "Custom String";
       const int intVal = 42;
 
+      var testType = typeof (ObjectTestClass);
       var stringVals = new[] {"Foo", "Bar", "Baz"};
       var innerObj = new ObjectInnerTestClass(innerVal);
-      var outerObj = new ObjectTestClass(stringVal, intVal, stringVals, innerObj);
+      var outerObj = new ObjectTestClass(stringVal, intVal, stringVals, innerObj, testType);
 
       var classDetailedString = outerObj.ToDetailedString("outerObj");
       Assert.IsTrue(!string.IsNullOrEmpty(classDetailedString));

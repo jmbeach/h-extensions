@@ -143,7 +143,10 @@ namespace Hylasoft.Extensions
       string typeWrapper, string nameWrapper, string indentation)
     {
       object property;
-      if (propInfo == null || ReferenceEquals(instance, null) || ReferenceEquals(property = propInfo.GetValue(instance, null), null))
+      if (propInfo == null 
+        || ReferenceEquals(instance, null)
+        || propInfo.PropertyType == typeof(Type)
+        || ReferenceEquals(property = propInfo.GetValue(instance, null), null))
         return new string[0];
 
       var propName = propInfo.Name;

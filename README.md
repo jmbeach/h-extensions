@@ -148,6 +148,22 @@ Perform an action on an enumeration.
  // Console: 1234
 ````
 
+Retrieve the default value of a given type.
+
+````C#
+  var foo = typeof(string).DefaultValue();
+  var bar = typeof(int).DefaultValue();
+
+  // foo == null
+  // bar == 0
+
+  foo = DefaultValue<string>();
+  bar = DefaultValue<int>();
+
+  // foo == null
+  // bar == 0
+````
+
 ## Build
 
 You can build the project using Visual Studio or by running the grunt tasks for `msbuild`

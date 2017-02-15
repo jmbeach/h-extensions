@@ -62,6 +62,7 @@
     <Compile Include="TestClasses\ObjectRecursionTestClass.cs" />
     <Compile Include="TestClasses\ObjectTestClass.cs" />
     <Compile Include="TestClasses\ComplexTestEnum.cs" />
+    <Compile Include="TypeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\h-extensions\h-extensions.csproj">

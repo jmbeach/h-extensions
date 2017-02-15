@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/hylasoft-usa/h-extensions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Adds retrieval of default value from types.</releaseNotes>
+    <releaseNotes>Emergency hotfix for object.ToDetailedString().</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Extensions Hylasoft</tags>
   </metadata>

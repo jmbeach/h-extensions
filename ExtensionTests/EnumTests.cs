@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using Hylasoft.Extensions.TestClasses;
+﻿using Hylasoft.Extensions.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EnumDescription  = System.ComponentModel.DescriptionAttribute;
 
@@ -38,6 +34,34 @@ namespace Hylasoft.Extensions
 
       Assert.AreEqual(fooEnum, TestEnum.Foo);
       Assert.AreEqual(invalidEnum, TestEnum.NotAValue);
+    }
+
+    [TestMethod]
+    public void ToEnumFromIntTest()
+    {
+      const int foo = 1;
+      const int bar = 2;
+      const int invalid = 5;
+
+      var fooEnum = foo.ToEnum<TestEnum>();
+      var barEnum = bar.ToEnum<TestEnum>();
+      var invalidEnum = invalid.ToEnum<TestEnum>();
+
+      Assert.AreEqual(fooEnum, TestEnum.Foo);
+      Assert.AreEqual(barEnum, TestEnum.Bar);
+      Assert.AreEqual(invalidEnum, TestEnum.NotAValue);
+    }
+
+    [TestMethod]
+    public void ToIntFromEnumTest()
+    {
+      const int foo = 1;
+      const int bar = 2;
+      const int invalid = 0;
+
+      Assert.AreEqual(foo, TestEnum.Foo.ToInt());
+      Assert.AreEqual(bar, TestEnum.Bar.ToInt());
+      Assert.AreEqual(invalid, TestEnum.NotAValue.ToInt());
     }
 
     [TestMethod]

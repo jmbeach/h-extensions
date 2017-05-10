@@ -65,6 +65,25 @@ public void Foo()
 }
 ````
 
+Convert from to and from an integer and an arbitrary enumeration.
+
+````C#
+public enum TestEnum
+{
+  Unknown = 0x0,
+  FirstValue = 0x1,
+  SecondValue = 0x2
+}
+
+public void Foo()
+{
+  Assert.AreEqual(TestEnum.FirstValue, 1.ToEnum<TestEnum>());
+  Assert.AreEqual(1, TestEnum.FirstValue.ToInt());
+
+  Assert.AreEqual(TestEnum.Unknown, 55.ToEnum<TestEnum>());
+}
+````
+
 Create a delimited list string, from any IEnumerable<string>.
 
 ````C#

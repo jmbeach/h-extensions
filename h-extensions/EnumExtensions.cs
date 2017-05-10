@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 
 namespace Hylasoft.Extensions
@@ -13,7 +14,7 @@ namespace Hylasoft.Extensions
     /// <param name="enumCode">The value to parse.</param>
     /// <returns>An enumeration of the specified value, or of default value if parsing failed.</returns>
     public static TEnum ToEnum<TEnum>(this string enumCode)
-      where TEnum : struct
+      where TEnum : struct, IConvertible
     {
       try
       {
@@ -32,13 +33,38 @@ namespace Hylasoft.Extensions
     }
 
     /// <summary>
+    /// Builds an instance of enumeration from an integer value.
+    /// </summary>
+    /// <typeparam name="TEnum">The type of enumeration to build.</typeparam>
+    /// <param name="enumValue">The value of the enumeration.</param>
+    public static TEnum ToEnum<TEnum>(this int enumValue)
+      where TEnum : struct, IConvertible
+    {
+      return Enum.IsDefined(typeof (TEnum), enumValue)
+        ? ConvertToValue<int, TEnum>(enumValue)
+        : BuildDefaultEnum<TEnum>();
+    }
+
+    /// <summary>
+    /// Retrieves the integer value of an enumeration.
+    /// </summary>
+    /// <typeparam name="TEnum">The type of enumeration.</typeparam>
+    /// <param name="enumValue">The value of the enumeration.</param>
+    /// <returns></returns>
+    public static int ToInt<TEnum>(this TEnum enumValue)
+      where TEnum : struct, IConvertible
+    {
+      return ConvertToValue<TEnum, int>(enumValue);
+    }
+
+    /// <summary>
     /// Retrieves the description attribute of an enumeration value.
     /// </summary>
     public static string GetDescription<TEnum>(this TEnum enumeration)
-      where TEnum : struct
+      where TEnum : struct, IConvertible
     {
       var enumType = enumeration.GetType();
-      var enumInfo = enumType.GetField(enumeration.ToString());
+      var enumInfo = enumType.GetField(enumeration.ToString(CultureInfo.InvariantCulture));
       var descriptionAttribute = enumInfo.GetCustomAttributes(typeof(DescriptionAttribute), true)
         .OfType<DescriptionAttribute>()
         .FirstOrDefault();
@@ -48,8 +74,9 @@ namespace Hylasoft.Extensions
         : string.Empty;
     }
 
+
     private static bool TryParseEnumFromDescription<TEnum>(string description, out TEnum enumVal)
-      where TEnum : struct
+      where TEnum : struct, IConvertible
     {
       var enumType = typeof (TEnum);
       var descriptions = enumType.GetMemberAttributes<DescriptionAttribute>();
@@ -63,9 +90,30 @@ namespace Hylasoft.Extensions
     }
 
     private static TEnum BuildDefaultEnum<TEnum>()
-      where TEnum : struct
+      where TEnum : struct, IConvertible
     {
       return (TEnum) Activator.CreateInstance(typeof (TEnum));
+    }
+
+    /// <summary>
+    /// Attempts to convert a value from one type to another.
+    /// </summary>
+    /// <typeparam name="TInput">The initial type of the value.</typeparam>
+    /// <typeparam name="TVal">The intended converted type of the value.</typeparam>
+    /// <param name="input">The value to be converted.</param>
+    private static TVal ConvertToValue<TInput, TVal>(TInput input)
+    {
+      var valType = typeof(TVal);
+      var defaultVal = (TVal)valType.DefaultValue();
+
+      try
+      {
+        return (TVal)(object)input;
+      }
+      catch
+      {
+        return defaultVal;
+      }
     }
   }
 }

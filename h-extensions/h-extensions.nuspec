@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/hylasoft-usa/h-extensions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Emergency hotfix for object.ToDetailedString().</releaseNotes>
+    <releaseNotes>Adds conversions between enumerations and integers.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Extensions Hylasoft</tags>
   </metadata>

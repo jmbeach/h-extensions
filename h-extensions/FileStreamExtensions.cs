@@ -17,22 +17,26 @@ namespace Hylasoft.Extensions
     }
 
     /// <summary>
-    /// Decrypts a file stream and returns an array of the decrypted bytes
+    /// Transforms (encrypts/decrypts) a file stream and returns an array
+    /// of the transformed bytes
     /// </summary>
     /// <param name="stream">File stream to decrypt</stream>
-    /// <param name="algorithm">Decryption technique used to decrypt file stream</stream>
-    public static byte[] Decrypt(this FileStream stream, ICryptoTransform algorithm)
+    /// <param name="transformer">Decryption technique used to decrypt file stream</stream>
+    public static byte[] Transform(this FileStream stream, ICryptoTransform transformer)
     {
-      var encryptedBytes = stream.ToByteArray();
-      var decryptedStream = new MemoryStream();
-      var cryptoStream = new CryptoStream(decryptedStream, algorithm, CryptoStreamMode.Write);
-      cryptoStream.FlushFinalBlock();
-      decryptedStream.Position = 0;
-      var decryptedBytes = new byte[encryptedBytes.Length];
-      decryptedStream.Read(decryptedBytes, 0, (int)decryptedStream.Length);
-      cryptoStream.Close();
-      decryptedStream.Close();
-      return decryptedBytes;
+      var originalBytes = stream.ToByteArray();
+      byte[] transformedBytes;
+      using (var transformedStream = new MemoryStream())
+      {
+        using (var cryptoStream = new CryptoStream(transformedStream, transformer, CryptoStreamMode.Write))
+        {
+          cryptoStream.Write(originalBytes, 0, originalBytes.Length);
+          cryptoStream.FlushFinalBlock();
+          transformedBytes = transformedStream.ToArray();
+        }
+      }
+
+      return transformedBytes;
     }
   }
 }

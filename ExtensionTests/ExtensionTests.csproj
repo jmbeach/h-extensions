@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CharSequenceTests.cs" />
+    <Compile Include="Constants\TestResources.cs" />
     <Compile Include="EnumerationTests.cs" />
     <Compile Include="EnumTests.cs" />
     <Compile Include="ExceptionTests.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="TestClasses\ObjectTestClass.cs" />
     <Compile Include="TestClasses\ComplexTestEnum.cs" />
     <Compile Include="TypeTests.cs" />
+    <Compile Include="FileStreamTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\h-extensions\h-extensions.csproj">

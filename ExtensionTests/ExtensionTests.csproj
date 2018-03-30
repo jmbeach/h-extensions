@@ -63,6 +63,7 @@
     <Compile Include="TestClasses\ObjectTestClass.cs" />
     <Compile Include="TestClasses\ComplexTestEnum.cs" />
     <Compile Include="TypeTests.cs" />
+    <Compile Include="FileStreamTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\h-extensions\h-extensions.csproj">

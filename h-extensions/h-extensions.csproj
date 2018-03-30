@@ -43,6 +43,7 @@
     <Compile Include="EnumerationExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="ExceptionExtensions.cs" />
+    <Compile Include="FileStreamExtensions.cs" />
     <Compile Include="MethodExtensions.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
